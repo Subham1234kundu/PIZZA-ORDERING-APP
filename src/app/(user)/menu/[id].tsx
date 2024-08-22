@@ -22,7 +22,7 @@ const ProductDetailsScreen = () => {
 
   const addToCart = ()=>{
     if(!product){
-      return;
+      return ;
     }
     addItem(product , selectedSize);
     router.push("/Cart")
