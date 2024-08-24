@@ -1,6 +1,6 @@
 import { Platform, StyleSheet, Text, View,FlatList } from 'react-native'
 import { StatusBar } from 'expo-status-bar';
-import { useContext } from 'react';
+
 import { useCart } from '../provider/CartProvider';
 
 import CartListItem from '../components/CartListItem';
