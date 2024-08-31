@@ -1,17 +1,21 @@
 import { supabase } from "@/src/lib/superbase";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const useProductList = ()=>{
-     return  useQuery({
-        queryKey:["products"],
-        queryFn:async()=>{
-          const {data,error} = await supabase.from("products").select("*");
-          if(error){
-            throw new Error(error.message);
-          }
-          return data
-        }
-      });
+export const useProductList = () => {
+  return useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("products").select("*");
+      if (error) {
+        console.error("Error fetching products:", error.message);
+        throw new Error(error.message);
+      }
+      return data;
+    },
+    onError: (error) => {
+      console.error("Network request failed:", error.message);
+    },
+  });
 };
 
 export const useProduct = (id:number)=>{
@@ -44,7 +48,7 @@ export const useInsertProducts = ()=>{
       return newProduct;
     },
     async onSuccess() {
-     await queryClient.invalidateQueries(["products"]);
+     await queryClient.invalidateQueries({queryKey:["products"]});
     },
 
   });
@@ -72,8 +76,8 @@ export const useUpdateProduct = ()=>{
       return updatedProduct;
     },
     async onSuccess(_, { id }) {
-      await queryClient.invalidateQueries(['products']);
-      await queryClient.invalidateQueries(['products', id]);
+      await queryClient.invalidateQueries({queryKey:["products"]});
+      await queryClient.invalidateQueries({queryKey:["products" , id]});
     },
   });
 };
@@ -89,7 +93,7 @@ export const useDeleteProduct =()=>{
     }
     },
     async onSuccess(){
-      await queryClient.invalidateQueries(["products"]);
+      await queryClient.invalidateQueries({queryKey:["products"]});
     }
   })
 }

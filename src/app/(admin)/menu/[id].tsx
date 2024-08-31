@@ -7,6 +7,7 @@ import { useCart } from '@/src/provider/CartProvider';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '@/src/constants/Colors';
 import { useProduct } from '@/src/api/products';
+import RemoteImage from '@/src/components/RemoteImg';
 
 
 const ProductDetailsScreen = () => {
@@ -42,9 +43,11 @@ const ProductDetailsScreen = () => {
           title:"Menu"
           }}/>
       <Stack.Screen options={{title: product?.name}}/>
-      <Image
-      source={{uri:product?.image || defaultPizzaImage}}
+      <RemoteImage
+      path={product?.image}
+      fallback={defaultPizzaImage}
       style={styles.image}
+      resizeMode='contain'
       />
       <Text  style={styles.title}>{product?.name}</Text>
       <Text  style={styles.price}>${product?.price}</Text>

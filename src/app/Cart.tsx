@@ -9,7 +9,7 @@ import Button from '../components/Button';
 
 
 const CartScreen = () => {
-  const {items , total} = useCart();
+  const {items , total, checkOut} = useCart();
   return (
     <View style={{padding:10}}>
       <FlatList
@@ -19,7 +19,7 @@ const CartScreen = () => {
       />
 
       <Text>Total: ${total}</Text>
-      <Button text='Checkout'/>
+      <Button onPress={checkOut} text='Checkout'/>
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
   )
@@ -27,4 +27,3 @@ const CartScreen = () => {
 
 export default CartScreen
 
-const styles = StyleSheet.create({})
