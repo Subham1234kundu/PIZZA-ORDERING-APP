@@ -6,6 +6,8 @@ import { Tables } from '../database.types';
 import { useInsertOrders } from '../api/products/orders';
 import { useRouter } from 'expo-router';
 import { useInsertOrderItems } from '../api/products/order-items';
+import { initilisePaymentSheet,openPaymentSheet  } from '../lib/stripe';
+
 
 type Product = Tables<"products">
 type CartType = {
@@ -64,7 +66,12 @@ const CartProvider = ({children}:PropsWithChildren) => {
         setItems([]);
     }
     //ordering
-    const checkOut =()=>{
+    const checkOut = async()=>{
+        await initilisePaymentSheet(Math.floor(total * 100));
+        const payed = await openPaymentSheet();
+        if(!payed){
+            return;
+        }
         insertOrder({total},{
             onSuccess:saveOrderItems
         }
