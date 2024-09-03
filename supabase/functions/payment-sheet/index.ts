@@ -4,28 +4,34 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { stripe } from "../_utils/stripe.ts";
-import { createOrRetrieveProfile } from "../_utils/supabase.ts";
+import { stripe } from "../_utils/stripe";
+import { createOrRetrieveProfile } from "../_utils/supabase";
 
-console.log("Hello from Functions!")
+console.log("Hello from Functions!");
 
-Deno.serve(async (req:Request) => {
- try {
+Deno.serve(async (req: Request) => {
+  try {
     const { amount } = await req.json();
+    console.log("Received amount:", amount);
 
-    const customer = await createOrRetrieveProfile();
+    const customer = await createOrRetrieveProfile(req);
+    console.log("Customer created/retrieved:", customer);
+
     const ephemeralKey = await stripe.ephemeralKeys.create(
-      {customer:customer},
-      {apiVersion:'2020-08-27'}
-    )
-    // Create a PaymentIntent so that the SDK can charge the logged in customer.
+      { customer: customer },
+      { apiVersion: '2020-08-27' }
+    );
+    console.log("Ephemeral key created:", ephemeralKey);
+
+    // Create a PaymentIntent so that the SDK can charge the logged-in customer.
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: 'usd',
       customer: customer,
       ephemeralKey: ephemeralKey.secret,
-      
     });
+    console.log("Payment intent created:", paymentIntent);
+
     const res = {
       publishableKey: Deno.env.get('EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY'),
       paymentIntent: paymentIntent.client_secret,
@@ -37,12 +43,13 @@ Deno.serve(async (req:Request) => {
       status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify(error), {
+    console.error("Error creating payment intent:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
       headers: { 'Content-Type': 'application/json' },
       status: 400,
     });
   }
-})
+});
 
 /* To invoke locally:
 

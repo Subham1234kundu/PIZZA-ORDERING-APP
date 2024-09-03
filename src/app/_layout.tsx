@@ -11,6 +11,7 @@ import { useColorScheme } from '@/src/components/useColorScheme';
 import AuthProvider from '../provider/AuthProvider';
 import QueryProvider from '../provider/QueryProvider';
 import { StripeProvider } from '@stripe/stripe-react-native';
+import NotificationProvider from '../provider/NotificationsProvider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -57,6 +58,7 @@ function RootLayoutNav() {
       <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}>
       <AuthProvider>
       <QueryProvider>
+      <NotificationProvider>
       <CartProvider>
         <Stack>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -65,6 +67,8 @@ function RootLayoutNav() {
           <Stack.Screen name="Cart" options={{ presentation: 'modal' }} />
         </Stack>
         </CartProvider> 
+      </NotificationProvider>
+
       </QueryProvider>
   
       </AuthProvider>

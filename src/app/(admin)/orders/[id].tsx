@@ -3,6 +3,7 @@ import { useOrderDetails, useUpdateOrder } from '@/src/api/products/orders';
 import OrderItemListItem from '@/src/components/OrderItemListItem';
 import OrderListItem from '@/src/components/OrderListItem';
 import Colors from '@/src/constants/Colors';
+import { notifyUserAboutOrderUpdate } from '@/src/lib/notifications';
 import { OrderStatusList } from '@/src/types';
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
@@ -14,10 +15,14 @@ const OrderDetailsScreen = () => {
   const {mutate:updateOrder} = useUpdateOrder();
   
 
-  const updateStatus = async (status:string)=>{
-   await updateOrder({id:id ,updatedFields:{
+  const updateStatus = async(status:string)=>{
+    await updateOrder({id:id ,updatedFields:{
       status
-    }})
+    }});
+    if(order){
+      await notifyUserAboutOrderUpdate({...order , status});
+    }
+
   }
 
     if(!order){
